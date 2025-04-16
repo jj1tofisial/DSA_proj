@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RouteWise</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    
+    <!-- Loading Screen Styles -->
+    <style>
+        .loading-screen {
+            display: none;   /* Initially hidden */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            z-index: 1000;   /* Make sure it's on top of everything */
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        // Ensure the loading screen is hidden when the page loads
+        window.onload = function() {
+            document.getElementById('loadingScreen').style.display = 'none';
+        };
+    </script>
+</head>
+<body>
+
+<div class="header">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+    <img src="{{ url_for('static', filename='images/title.png') }}" alt="Title" class="title">
+</div>
+
+<div class="container">
+    <div class="description">
+        <p>Find the shortest path between two locations with <strong>RouteWise</strong>.</p>
+    </div>
+
+    <form id="routeForm">
+        <label for="start"></label>
+        <input type="text" id="start" placeholder="Enter Start Location" required>
+        
+        <label for="end"></label>
+        <input type="text" id="end" placeholder="Enter End Location" required>
+        
+        <button type="submit" class="find-button">Find Route</button>
+    </form>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <div id="map" class="map"></div>
+</div>
+
+<script>
+    var map = L.map('map').setView([26.2958, 73.0248], 13); // Center on Jodhpur
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Show loading screen
+    function showLoadingScreen() {
+        document.getElementById('loadingScreen').style.display = 'flex';
+    }
+
+    // Hide loading screen
+    function hideLoadingScreen() {
+        document.getElementById('loadingScreen').style.display = 'none';
+    }
+
+    document.getElementById('routeForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const start = document.getElementById('start').value;
+        const end = document.getElementById('end').value;
+
+        showLoadingScreen();  // Show loading screen
+
+        fetch('/find_distance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `start=${start}&end=${end}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoadingScreen();  // Hide loading screen once response is received
+            
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            const route = data.route;
+            animatePath(route);
+        })
+        .catch(error => {
+            hideLoadingScreen();  // Hide loading screen in case of error
+            alert('Error: ' + error);
+        });
+    });
+
+    let currentPathLine = null;
+    let currentMarker = null;
+    let startMarker = null;
+    let endMarker = null;
+
+    function animatePath(route) {
+        if (route.length === 0) return;
+
+        let pathCoordinates = route.map(node => [node.lat, node.lon]);
+
+        if (currentPathLine) {
+            map.removeLayer(currentPathLine);
+        }
+        if (currentMarker) {
+            map.removeLayer(currentMarker);
+        }
+
+        if (startMarker) {
+            map.removeLayer(startMarker);  // Remove previous start marker
+        }
+        if (endMarker) {
+            map.removeLayer(endMarker);    // Remove previous end marker
+        }
+
+        // Set initial view to the first point of the path
+        map.setView(pathCoordinates[0], 18);
+
+        // Create a new marker for the start and end locations
+        startMarker = L.marker(pathCoordinates[0], {icon: L.icon({iconUrl: 'path_to_start_icon.png', iconSize: [25, 41]})}).addTo(map);
+        endMarker = L.marker(pathCoordinates[pathCoordinates.length - 1], {icon: L.icon({iconUrl: 'path_to_end_icon.png', iconSize: [25, 41]})}).addTo(map);
+
+        currentMarker = L.marker(pathCoordinates[0]).addTo(map);
+        currentPathLine = L.polyline([], { color: 'green' }).addTo(map);
+
+        let i = 0;
+        let interval = setInterval(function() {
+            if (i < pathCoordinates.length) {
+                currentPathLine.addLatLng(pathCoordinates[i]);
+                currentMarker.setLatLng(pathCoordinates[i]);
+
+                // Move the map's center to follow the marker if it goes out of view
+                map.panTo(pathCoordinates[i]);
+
+                i++;
+            } else {
+                clearInterval(interval);
+                // After the path is fully drawn, zoom out to fit both start and end locations
+                map.fitBounds([pathCoordinates[0], pathCoordinates[pathCoordinates.length - 1]]);
+            }
+        }, 200);
+    }
+
+</script>
+</body>
+</html>
