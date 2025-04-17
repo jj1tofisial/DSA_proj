@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import requests
 from geopy.geocoders import Nominatim
 import folium
-from algorithms import a_star  # Import the A* algorithm
+from algorithms import a_star  
 
 app = Flask(__name__)
 
@@ -11,7 +11,7 @@ def get_coordinates(location):
     loc = geolocator.geocode(location)
     return (loc.latitude, loc.longitude) if loc else None
 
-def get_osm_data(lat, lon, radius=100000):  # Increase the radius to 100km
+def get_osm_data(lat, lon, radius=100000): 
     url = "https://overpass-api.de/api/interpreter"
     query = f"""
     [out:json];
@@ -71,7 +71,7 @@ def find_distance():
 
     start_lat, start_lon = start_coords
     end_lat, end_lon = end_coords
-    osm_data = get_osm_data(start_lat, start_lon, radius=100000)  # 100km range
+    osm_data = get_osm_data(start_lat, start_lon, radius=100000) 
     
     graph = build_graph(osm_data)
 
@@ -81,9 +81,9 @@ def find_distance():
     if not start_node or not end_node:
         return jsonify({'error': 'No valid nodes found near the locations.'})
 
-    shortest_path = a_star(graph, start_node, end_node)  # Use A* algorithm
+    shortest_path = a_star(graph, start_node, end_node)  
 
-    # Create path coordinates
+  
     path_coordinates = []
     for node in shortest_path:
         lat = graph[node]["lat"]
