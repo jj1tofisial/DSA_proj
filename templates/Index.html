@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     
-    <!-- Loading Screen Styles -->
+
     <style>
         .loading-screen {
-            display: none;   /* Initially hidden */
+            display: none;  
             position: fixed;
             top: 0;
             left: 0;
@@ -23,7 +23,7 @@
             justify-content: center;
             align-items: center;
             display: flex;
-            z-index: 1000;   /* Make sure it's on top of everything */
+            z-index: 1000;
         }
 
         .spinner {
@@ -42,7 +42,6 @@
     </style>
 
     <script>
-        // Ensure the loading screen is hidden when the page loads
         window.onload = function() {
             document.getElementById('loadingScreen').style.display = 'none';
         };
@@ -85,12 +84,12 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Show loading screen
+
     function showLoadingScreen() {
         document.getElementById('loadingScreen').style.display = 'flex';
     }
 
-    // Hide loading screen
+ 
     function hideLoadingScreen() {
         document.getElementById('loadingScreen').style.display = 'none';
     }
@@ -100,7 +99,7 @@
         const start = document.getElementById('start').value;
         const end = document.getElementById('end').value;
 
-        showLoadingScreen();  // Show loading screen
+        showLoadingScreen();  
 
         fetch('/find_distance', {
             method: 'POST',
@@ -109,7 +108,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            hideLoadingScreen();  // Hide loading screen once response is received
+            hideLoadingScreen(); 
             
             if (data.error) {
                 alert(data.error);
@@ -120,7 +119,7 @@
             animatePath(route);
         })
         .catch(error => {
-            hideLoadingScreen();  // Hide loading screen in case of error
+            hideLoadingScreen(); 
             alert('Error: ' + error);
         });
     });
@@ -143,16 +142,14 @@
         }
 
         if (startMarker) {
-            map.removeLayer(startMarker);  // Remove previous start marker
+            map.removeLayer(startMarker); 
         }
         if (endMarker) {
-            map.removeLayer(endMarker);    // Remove previous end marker
+            map.removeLayer(endMarker);  
         }
 
-        // Set initial view to the first point of the path
+      
         map.setView(pathCoordinates[0], 18);
-
-        // Create a new marker for the start and end locations
         startMarker = L.marker(pathCoordinates[0], {icon: L.icon({iconUrl: 'path_to_start_icon.png', iconSize: [25, 41]})}).addTo(map);
         endMarker = L.marker(pathCoordinates[pathCoordinates.length - 1], {icon: L.icon({iconUrl: 'path_to_end_icon.png', iconSize: [25, 41]})}).addTo(map);
 
@@ -165,13 +162,12 @@
                 currentPathLine.addLatLng(pathCoordinates[i]);
                 currentMarker.setLatLng(pathCoordinates[i]);
 
-                // Move the map's center to follow the marker if it goes out of view
+
                 map.panTo(pathCoordinates[i]);
 
                 i++;
             } else {
                 clearInterval(interval);
-                // After the path is fully drawn, zoom out to fit both start and end locations
                 map.fitBounds([pathCoordinates[0], pathCoordinates[pathCoordinates.length - 1]]);
             }
         }, 200);
