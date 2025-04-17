@@ -53,3 +53,11 @@ pip install -r requirements.txt
 python app.py
 
 ```
+## Contributors
+  This project was developed by the following team members:
+  Aditya Rout  (B23PH1002)
+  Amee Ghai    (B23PH1003)
+  Anuj Trivedi (B23CH1006)
+  Kartik Jain  (B23ME1026)
+
+
