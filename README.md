@@ -31,8 +31,16 @@ Before running RouteWise, ensure you have the following installed:
 - pip package manager
 - Internet connection (for map and Overpass API)
 
-Install dependencies:
+## Installation
+
+### 1. Clone the repository:
+First, clone the repository to your local machine:
 
 ```bash
-cd backend
-pip install -r requirements.txt
+git clone https://github.com/your-username/RouteWise.git
+```
+
+### 2. Enter the "Project" directory:
+```bash
+cd RouteWise
+```
