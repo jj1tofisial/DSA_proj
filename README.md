@@ -1,7 +1,7 @@
 # RouteWise
 
-<p align="center">
-  <img src="static/images/logo1.png" alt="RouteWise Logo" width="150"/>
+<p align="left">
+  <img src="static/images/logo1.PNG" alt="RouteWise Logo" width="150"/>
 </p>
 
 ---
@@ -17,7 +17,7 @@
 
 - Take user input of **start** and **end** real-world locations  
 - Fetch live data from **OpenStreetMap** using Overpass API  
-- Calculate the **shortest path using A\*** algorithm (custom implementation)  
+- Calculate the **shortest path using A\*** algorithm 
 - Display animated path on a dynamic **Leaflet.js map**  
 - Show a loading animation while the route is being processed  
 
