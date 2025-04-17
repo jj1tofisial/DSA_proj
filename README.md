@@ -37,10 +37,19 @@ Before running RouteWise, ensure you have the following installed:
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/RouteWise.git
+git clone https://github.com/jj1tofisial/DSA_proj.git
 ```
 
 ### 2. Enter the "Project" directory:
 ```bash
-cd RouteWise
+cd DSA_proj
+```
+### 3. Install Dependencies:
+```
+pip install -r requirements.txt
+```
+### 4. Run Application
+```
+python app.py
+
 ```
