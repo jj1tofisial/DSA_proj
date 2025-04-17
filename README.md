@@ -55,9 +55,8 @@ python app.py
 ```
 ## Contributors
   This project was developed by the following team members:
-  Aditya Rout  (B23PH1002)
-  Amee Ghai    (B23PH1003)
-  Anuj Trivedi (B23CH1006)
-  Kartik Jain  (B23ME1026)
-
+ - **Aditya Rout** (Roll Number: B23PH1002)
+ - **Amee Ghai** (Roll Number: B23PH1003)
+ - **Anuj Trivedi** (Roll Number: B23CH1006)
+ - **Kartik Jain** (Roll Number: B23ME1026)
 
